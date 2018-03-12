@@ -1,13 +1,14 @@
 const expect = require('chai').expect
-var chai = require('chai');
-var spies = require('chai-spies');
-chai.use(spies);
+var chai = require('chai')
+var spies = require('chai-spies')
+chai.use(spies)
 
 describe('Simple math confirmation', () => {
   it('does really simple addition', () => {
     expect(2 + 2).to.equal(4)
   })
 })
+
 
 
 describe('Actual time of timeout', () => {
