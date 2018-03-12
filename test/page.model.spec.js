@@ -5,36 +5,60 @@ chai.use(spies)
 const Page = require('../models').Page
 
 describe('Page model', function () {
+  let builtPage
+  let title = 'the title'
+  let content = '# the content'
+  let status = 'closed'
+  let urlTitle = 'the_title'
+  beforeEach(function() {
+    builtPage = Page.build({
+      title,
+      content,
+      status,
+      urlTitle
+    })
+  })
+
   describe('page creation', function() {
-    let builtPage
     it('builds a new page', function() {
-      builtPage = Page.build({
-        title: 'The title',
-        content: 'the content',
-        status: 'closed'
-      })
       expect(builtPage.title).to.exist
-      expect(builtPage.content).to.equal('the content')
+      expect(builtPage.content).to.equal(content)
       expect(builtPage.status).to.be.oneOf(['open', 'closed'])
     })
   })
+
+  describe('Virtuals', function () {
+    // describe('set urlTitle', function () {
+    //   it('sets a urlTitle on a newly created page', function() {
+    //     expect(builtPage.urlTitle).to.equal('the_title')
+    //   })
+    // })
+    describe('route', function () {
+      it('returns the urlTitle prepended by "/wiki/"', function() {
+        expect(builtPage.route).to.equal('/wiki/the_title')
+      })
+    });
+
+    describe('renderedContent', function () {
+      it('converts the markdown-formatted content into HTML', function() {
+        expect(builtPage.renderedContent.trim()).to.equal('<h1 id="the-content">the content</h1>')
+      });
+    });
+  });
+
+
+
+
+
+
 });
 
-//   describe('Virtuals', function () {
-//     describe('route', function () {
-//       it('returns the urlTitle prepended by "/wiki/"');
-//     });
-//     describe('renderedContent', function () {
-//       it('converts the markdown-formatted content into HTML');
-//     });
+// describe('Class methods', function () {
+//   describe('findByTag', function () {
+//     it('gets pages with the search tag');
+//     it('does not get pages without the search tag');
 //   });
-
-//   describe('Class methods', function () {
-//     describe('findByTag', function () {
-//       it('gets pages with the search tag');
-//       it('does not get pages without the search tag');
-//     });
-//   });
+// });
 
 //   describe('Instance methods', function () {
 //     describe('findSimilar', function () {
