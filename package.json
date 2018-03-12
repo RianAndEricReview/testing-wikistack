@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon index.js",
+    "test": "mocha -w"
   },
   "keywords": [],
   "author": "",
@@ -12,6 +13,7 @@
   "dependencies": {
     "bluebird": "^3.4.1",
     "body-parser": "^1.15.2",
+    "chai-spies": "^1.0.0",
     "express": "^4.14.0",
     "marked": "^0.3.6",
     "morgan": "^1.7.0",
@@ -22,6 +24,8 @@
     "sequelize": "^4.3.2"
   },
   "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.0.4",
     "nodemon": "^1.10.0"
   }
 }
