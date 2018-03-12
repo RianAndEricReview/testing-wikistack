@@ -3,7 +3,6 @@ var chai = require('chai')
 var spies = require('chai-spies')
 chai.use(spies)
 const {Page, User} = require('../models')
-const Promise = require('bluebird')
 
 describe('Page model', function () {
   let builtPage
@@ -87,7 +86,9 @@ describe('Page model', function () {
   })
 
   describe('Instance methods', function () {
-    let pageToTest 
+    let pageToTest
+    let pageNotMatch
+    let pageMatch
     // = Page.create({
     //       title: `page 1`,
     //       content: `this is page 1`,
@@ -109,7 +110,7 @@ describe('Page model', function () {
     let arrOfPromises = []
     before(function(done){
       for (let i = 1; i <=3 ; i++){
-        let tagList = (!i % 2) ? ['oddtag'] : ['eventag']
+        let tagList = !(i % 2) ? ['oddtag'] : ['eventag']
         let pushedPromise = Page.create({
           title: `page${i}`,
           content: `this is page ${i}`,
@@ -120,8 +121,9 @@ describe('Page model', function () {
       }
       Promise.all(arrOfPromises)
       .then(function (pages) {
-        console.log('PAGESSSS', pages)
         pageToTest = pages[0]
+        pageNotMatch = pages[1]
+        pageMatch = pages[2]
         done()
       })
       .catch(done)
@@ -129,15 +131,28 @@ describe('Page model', function () {
     
     describe('findSimilar', function () {
       it('never gets itself', function (done){
-        expect(pageToTest.findSimilar('oddtag')).to.not.include(pageToTest)
-        done()
+        pageToTest.findSimilar('oddtag')
+        .then((similarPages) => {
+          expect(similarPages).to.have.lengthOf(1)
+          expect(similarPages).to.not.contain.thing.with.property('id', pageToTest.id)
+          done()
+        })
       })
+      it('gets other pages with any common tags', function (done){
+        pageToTest.findSimilar('oddtag')
+        .then((similarPages) => {
+        expect(similarPages).to.contain.thing.with.property('id', pageMatch.id)
+        done()
+        })
+      });
 
-
-
-
-      xit('gets other pages with any common tags');
-      xit('does not get other pages without any common tags');
+      it('does not get other pages without any common tags', function (done){
+        pageToTest.findSimilar('oddtag')
+        .then((similarPages) => {
+          expect(similarPages).to.not.contain.thing.with.property('id', pageNotMatch.id)
+          done()
+        })
+      })
     });
   });
 
