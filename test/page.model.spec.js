@@ -2,7 +2,7 @@ const expect = require('chai').expect
 var chai = require('chai')
 var spies = require('chai-spies')
 chai.use(spies)
-const Page = require('../models').Page
+const {Page, User} = require('../models')
 
 describe('Page model', function () {
   let builtPage
