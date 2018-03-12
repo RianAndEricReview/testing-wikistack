@@ -3,6 +3,7 @@ var chai = require('chai')
 var spies = require('chai-spies')
 chai.use(spies)
 const {Page, User} = require('../models')
+const Promise = require('bluebird')
 
 describe('Page model', function () {
   let builtPage
@@ -49,12 +50,15 @@ describe('Page model', function () {
 
   describe('Class methods', function () {
     before(function(done) {
-      Page.create({
-        title,
-        content,
-        status,
-        urlTitle,
-        tags
+      Page.sync({force: true})
+      .then(()=>{
+        Page.create({
+          title,
+          content,
+          status,
+          urlTitle,
+          tags
+        })
       })
       .then(function() {
         done()
@@ -62,10 +66,6 @@ describe('Page model', function () {
       .catch(done)
     })
 
-    after(function(done) {
-      Page.sync({force: true})
-      done()
-    })
 
     describe('findByTag', function () {
       it('gets pages with the search tag', function(done) {
@@ -86,18 +86,65 @@ describe('Page model', function () {
     })
   })
 
+  describe('Instance methods', function () {
+    let pageToTest 
+    // = Page.create({
+    //       title: `page 1`,
+    //       content: `this is page 1`,
+    //       status: `open`,
+    //       tags: ['tag1'],
+    //     })
+    // let page2 = Page.create({
+    //   title: `page 2`,
+    //   content: `this is page 2`,
+    //   status: `open`,
+    //   tags: ['tag2'],
+    // })
+    // let page3 = Page.create({
+    //   title: `page 3`,
+    //   content: `this is page 3`,
+    //   status: `open`,
+    //   tags: ['tag1'],
+    // })
+    let arrOfPromises = []
+    before(function(done){
+      for (let i = 1; i <=3 ; i++){
+        let tagList = (!i % 2) ? ['oddtag'] : ['eventag']
+        let pushedPromise = Page.create({
+          title: `page${i}`,
+          content: `this is page ${i}`,
+          status: `open`,
+          tags: tagList,
+        })
+        arrOfPromises.push(pushedPromise)
+      }
+      Promise.all(arrOfPromises)
+      .then(function (pages) {
+        console.log('PAGESSSS', pages)
+        pageToTest = pages[0]
+        done()
+      })
+      .catch(done)
+    })
+    
+    describe('findSimilar', function () {
+      it('never gets itself', function (done){
+        expect(pageToTest.findSimilar('oddtag')).to.not.include(pageToTest)
+        done()
+      })
+
+
+
+
+      xit('gets other pages with any common tags');
+      xit('does not get other pages without any common tags');
+    });
+  });
 
 });
 
 
 
-//   describe('Instance methods', function () {
-//     describe('findSimilar', function () {
-//       it('never gets itself');
-//       it('gets other pages with any common tags');
-//       it('does not get other pages without any common tags');
-//     });
-//   });
 
 //   describe('Validations', function () {
 //     it('errors without title');
