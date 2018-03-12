@@ -10,6 +10,7 @@ describe('Page model', function () {
   let content = '# the content'
   let status = 'closed'
   let urlTitle = 'the_title'
+  let tags = ['the', 'content']
   beforeEach(function() {
     builtPage = Page.build({
       title,
@@ -42,23 +43,53 @@ describe('Page model', function () {
     describe('renderedContent', function () {
       it('converts the markdown-formatted content into HTML', function() {
         expect(builtPage.renderedContent.trim()).to.equal('<h1 id="the-content">the content</h1>')
-      });
-    });
-  });
+      })
+    })
+  })
 
+  describe('Class methods', function () {
+    before(function(done) {
+      Page.create({
+        title,
+        content,
+        status,
+        urlTitle,
+        tags
+      })
+      .then(function() {
+        done()
+      })
+      .catch(done)
+    })
 
+    after(function(done) {
+      Page.sync({force: true})
+      done()
+    })
 
+    describe('findByTag', function () {
+      it('gets pages with the search tag', function(done) {
+        Page.findByTag('the')
+        .then(function(pageArr) {
+          expect(pageArr.length).to.equal(1)
+          done()
+        })
+      })
 
+      it('does not get pages without the search tag', function(done) {
+        Page.findByTag('scooby')
+        .then(function(pageArr) {
+          expect(pageArr.length).to.equal(0)
+          done()
+        })
+      })
+    })
+  })
 
 
 });
 
-// describe('Class methods', function () {
-//   describe('findByTag', function () {
-//     it('gets pages with the search tag');
-//     it('does not get pages without the search tag');
-//   });
-// });
+
 
 //   describe('Instance methods', function () {
 //     describe('findSimilar', function () {
