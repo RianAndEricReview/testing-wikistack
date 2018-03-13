@@ -31,11 +31,6 @@ describe('Page model', function () {
   })
 
   describe('Virtuals', function () {
-    // describe('set urlTitle', function () {
-    //   it('sets a urlTitle on a newly created page', function() {
-    //     expect(builtPage.urlTitle).to.equal('the_title')
-    //   })
-    // })
     describe('route', function () {
       it('returns the urlTitle prepended by "/wiki/"', function() {
         expect(builtPage.route).to.equal('/wiki/the_title')
@@ -209,14 +204,49 @@ describe('Page model', function () {
       .catch(done)
     });
   });
+
+  describe('Hooks', function () {
+    it('the URL title errors if no title is put in', function(done){
+      let testPage = Page.build({
+          title: null,
+          content: 'fsljflsh',
+          status: `open`,
+        })
+        testPage.validate()
+        .catch((error) => {
+          expect(error.errors[1].path).to.equal('urlTitle')
+          done()
+        })
+        .then(page => {
+          expect(page).to.not.exist
+        })
+        .catch(done)
+    });
+
+    it('it sets urlTitle based on title before validating', function(done){
+      let testPage = Page.build({
+          title: 'title and stuff',
+          content: 'fsljflsh',
+          status: `open`,
+        })
+        testPage.validate()
+        .then(page => {
+          expect(page.urlTitle).to.equal('title_and_stuff')
+          done()
+        })
+        .catch(done)
+    });
+  });
+
 });
 
+    // describe('set urlTitle', function () {
+    //   it('sets a urlTitle on a newly created page', function() {
+    //     expect(builtPage.urlTitle).to.equal('the_title')
+    //   })
+    // })
 
 
 
-
-//   describe('Hooks', function () {
-//     it('it sets urlTitle based on title before validating');
-//   });
 
 // });
