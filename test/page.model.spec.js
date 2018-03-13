@@ -239,14 +239,3 @@ describe('Page model', function () {
   });
 
 });
-
-    // describe('set urlTitle', function () {
-    //   it('sets a urlTitle on a newly created page', function() {
-    //     expect(builtPage.urlTitle).to.equal('the_title')
-    //   })
-    // })
-
-
-
-
-// });
