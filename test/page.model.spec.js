@@ -2,6 +2,8 @@ const expect = require('chai').expect
 var chai = require('chai')
 var spies = require('chai-spies')
 chai.use(spies)
+chai.should()
+chai.use(require('chai-things'))
 const {Page, User} = require('../models')
 
 describe('Page model', function () {
@@ -128,7 +130,7 @@ describe('Page model', function () {
       })
       .catch(done)
     })
-    
+
     describe('findSimilar', function () {
       it('never gets itself', function (done){
         pageToTest.findSimilar('oddtag')
@@ -155,7 +157,7 @@ describe('Page model', function () {
       })
     });
   });
-  
+
   describe('Validations', function () {
     it('errors without title', function(done){
       let testPage = Page.build({
@@ -181,7 +183,7 @@ describe('Page model', function () {
         done()
       })
     });
-    it('errors given an invalid status', function(done){
+    xit('errors given an invalid status', function(done){
       let testPage = Page.build({
         title: 'title',
         content: 'fsljflsh',
