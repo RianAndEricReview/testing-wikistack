@@ -49,14 +49,51 @@ describe('http requests', function () {
     });
   });
 
-  // describe('GET /wiki/search/:tag', function () {
-  //   it('responds with 200');
-  // });
+  describe('GET /wiki/search/:tag', function () {
+    it('responds with 200', function(done) {
+      agent
+      .get('/wiki/search/clover')
+      .expect(200, done);
+    });
+  });
 
-  // describe('GET /wiki/:urlTitle/similar', function () {
-  //   it('responds with 404 for page that does not exist');
-  //   it('responds with 200 for similar page');
-  // });
+  describe('GET /wiki/:urlTitle/similar', function () {
+    before(function(done) {
+      Page.sync({force: true})
+      .then(function() {
+        return Promise.all([Page.create({
+          title: 'your page title',
+          content: 'page content',
+          status: 'open',
+          tags: ['clover', 'honey']
+        }), Page.create({
+          title: 'our page title',
+          content: 'page content',
+          status: 'open',
+          tags: ['clover']
+        }), Page.create({
+          title: 'their page title',
+          content: 'page content',
+          status: 'open',
+          tags: ['none']
+        })])
+      })
+      .then(() => {
+        done()
+      })
+      .catch(done)
+    })
+    it('responds with 404 on page that does not exist', function(done) {
+      agent
+      .get('/wiki/scoobys_page_title/similar')
+      .expect(404, done)
+    });
+    it('gets 200 on page that exists', function (done) {
+      agent
+      .get('/wiki/your_page_title/similar')
+      .expect(200, done);
+    });
+  });
 
   // describe('POST /wiki', function () {
   //   it('responds with 302');
