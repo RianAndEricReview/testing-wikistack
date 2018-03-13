@@ -170,6 +170,10 @@ describe('Page model', function () {
           expect(error.errors[0].path).to.equal('title')
           done()
         })
+        .then(page => {
+          expect(page).to.not.exist
+        })
+        .catch(done)
     });
     it('errors without content', function(done){
       let testPage = Page.build({
@@ -182,21 +186,27 @@ describe('Page model', function () {
         expect(error.errors[0].path).to.equal('content')
         done()
       })
+      .then(page => {
+        expect(page).to.not.exist
+      })
+      .catch(done)
     });
-    xit('errors given an invalid status', function(done){
-      let testPage = Page.build({
+    it('errors given an invalid status', function(done){
+      let testPage = Page.create({
         title: 'title',
         content: 'fsljflsh',
-        status: `bad data`,
-      })
-      testPage.validate()
-      .then(page => {
-        console.log('PPPAAAGGEE', page)
+        status: `garbage`,
       })
       .catch((error) => {
-        expect(error.errors[0].path).to.equal('status')
+        console.log(error.message)
+        expect(error).to.exist
+        expect(error.message).to.contain('status')
         done()
       })
+      .then(page => {
+        expect(page).to.not.exist
+      })
+      .catch(done)
     });
   });
 });
