@@ -155,17 +155,53 @@ describe('Page model', function () {
       })
     });
   });
-
+  
+  describe('Validations', function () {
+    it('errors without title', function(done){
+      let testPage = Page.build({
+          title: null,
+          content: 'fsljflsh',
+          status: `open`,
+        })
+        testPage.validate()
+        .catch((error) => {
+          expect(error.errors[0].path).to.equal('title')
+          done()
+        })
+    });
+    it('errors without content', function(done){
+      let testPage = Page.build({
+        title: 'title',
+        content: null,
+        status: `open`,
+      })
+      testPage.validate()
+      .catch((error) => {
+        expect(error.errors[0].path).to.equal('content')
+        done()
+      })
+    });
+    it('errors given an invalid status', function(done){
+      let testPage = Page.build({
+        title: 'title',
+        content: 'fsljflsh',
+        status: `bad data`,
+      })
+      testPage.validate()
+      .then(page => {
+        console.log('PPPAAAGGEE', page)
+      })
+      .catch((error) => {
+        expect(error.errors[0].path).to.equal('status')
+        done()
+      })
+    });
+  });
 });
 
 
 
 
-//   describe('Validations', function () {
-//     it('errors without title');
-//     it('errors without content');
-//     it('errors given an invalid status');
-//   });
 
 //   describe('Hooks', function () {
 //     it('it sets urlTitle based on title before validating');
